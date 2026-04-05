@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Status</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">🗂 LeaveTask</div>
+        <p>Management System</p>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-label">Navigation</div>
+          <div id="nav-links">
+            <a href="employee-dashboard.html">Dashboard</a>
+            <a href="leave-request.html">Leave Request</a>
+            <a href="task-status.html">Task Status</a>
+          </div>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="user-initials">?</div>
+          <div>
+            <div class="user-name" id="user-name">Loading…</div>
+            <div class="user-role" id="user-role"></div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <div class="page-header">
+        <h1 id="page-title">Task Status</h1>
+        <p>View and update your assigned tasks.</p>
+      </div>
+      <div id="alert-container"></div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Your Tasks</h3>
+        </div>
+        <div class="card-body">
+          <div id="myTaskList"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>
