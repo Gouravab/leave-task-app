@@ -67,6 +67,7 @@ public class LeaveService {
         r.setToDate(l.getToDate());
         r.setReason(l.getReason());
         r.setStatus(l.getStatus().name());
+        r.setCreatedAt(l.getCreatedAt());
         return r;
     }
 }

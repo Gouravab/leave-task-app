@@ -19,19 +19,18 @@ public class DashboardService {
 
     public AdminDashboard getAdminDashboard() {
         AdminDashboard d = new AdminDashboard();
-        d.setTotalEmployees(employeeRepo.count());
-        d.setTotalLeaveRequests(leaveRepo.count());
-        d.setPendingLeaveRequests(leaveRepo.countByStatus(LeaveRequest.Status.PENDING));
-        d.setTotalTasks(taskRepo.count());
+        d.setTotalEmployees(employeeRepo.findAll().size());
+        d.setTotalTasks(taskRepo.findAll().size());
+        d.setPendingLeaves((int) leaveRepo.findAll().stream().filter(l -> l.getStatus() == LeaveRequest.Status.PENDING).count());
+        d.setCompletedTasks((int) taskRepo.countByStatus(Task.Status.COMPLETED));
         return d;
     }
 
     public EmployeeDashboard getEmployeeDashboard(Long employeeId) {
         EmployeeDashboard d = new EmployeeDashboard();
-        d.setAssignedTasks(taskRepo.countByAssignedEmployeeId(employeeId));
-        d.setCompletedTasks(taskRepo.countByAssignedEmployeeIdAndStatus(employeeId, Task.Status.COMPLETED));
-        d.setPendingTasks(taskRepo.countByAssignedEmployeeIdAndStatus(employeeId, Task.Status.PENDING));
-        d.setTotalLeaveRequests(leaveRepo.countByEmployeeId(employeeId));
+        d.setMyTasks(taskRepo.countByAssignedEmployeeId(employeeId));
+        d.setMyLeaves(leaveRepo.countByEmployeeId(employeeId));
+        d.setPendingApprovals(leaveRepo.countByEmployeeIdAndStatus(employeeId, LeaveRequest.Status.PENDING));
         return d;
     }
 }

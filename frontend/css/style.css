@@ -68,9 +68,45 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50
 .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
 
 /* ===== STAT CARDS ===== */
-.stat-card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--gray-200); text-align: center; }
-.stat-card h3 { font-size: 14px; font-weight: 600; color: var(--gray-500); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-card p { font-size: 24px; font-weight: 800; color: var(--gray-900); }
+.stat-card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--gray-200); display: flex; align-items: center; gap: 16px; text-align: left; transition: transform 0.2s; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+.stat-card .card-icon { font-size: 32px; opacity: 0.8; }
+.stat-card .card-content { flex: 1; }
+.stat-card h3 { font-size: 14px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .card-value { font-size: 28px; font-weight: 800; color: var(--gray-900); margin-bottom: 8px; }
+.stat-card .card-trend { font-size: 12px; color: var(--gray-600); font-weight: 500; }
+.stat-card .progress-bar { width: 100%; height: 6px; background: var(--gray-200); border-radius: 3px; margin: 8px 0; overflow: hidden; }
+.stat-card .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 3px; transition: width 0.3s; }
+
+/* Card themes */
+.card-employees .card-icon { color: #3b82f6; }
+.card-tasks .card-icon { color: #f59e0b; }
+.card-leaves .card-icon { color: #10b981; }
+.card-completed .card-icon { color: #8b5cf6; }
+.card-pending .card-icon { color: #ef4444; }
+
+/* ===== ANALYTICS ===== */
+.analytics-section { margin-top: 30px; }
+.analytics-section h2 { font-size: 20px; font-weight: 600; color: var(--gray-900); margin-bottom: 20px; }
+.analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.analytics-card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--gray-200); }
+.analytics-card h4 { font-size: 16px; font-weight: 600; color: var(--gray-900); margin-bottom: 15px; }
+.metric { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.metric-label { font-size: 14px; color: var(--gray-600); }
+.metric-value { font-size: 16px; font-weight: 600; color: var(--gray-900); }
+
+/* ===== TASK ITEMS ===== */
+.task-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+.task-item:last-child { border-bottom: none; }
+.task-info { flex: 1; }
+.task-info strong { display: block; font-size: 14px; color: var(--gray-900); margin-bottom: 4px; }
+.task-status { font-size: 12px; padding: 2px 8px; border-radius: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.status-pending { background: #fef3c7; color: #d97706; }
+.status-in_progress { background: #dbeafe; color: #2563eb; }
+.status-completed { background: #d1fae5; color: #065f46; }
+.task-actions { margin-left: 16px; }
+.task-actions select { padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 12px; }
 
 /* ===== CARD ===== */
 .card { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow); border: 1px solid var(--gray-200); }
@@ -140,12 +176,22 @@ tr:hover td { background: var(--gray-50); }
 
 /* ===== LEAVE & TASK CARDS ===== */
 .leave-card, .task-card {
-  background: var(--white); border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
-  box-shadow: var(--shadow); border: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;
+  background: var(--white); border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+  box-shadow: var(--shadow); border: 1px solid var(--gray-200); transition: box-shadow 0.15s;
 }
-.leave-card h4, .task-card h4 { font-size: 16px; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
-.leave-card p, .task-card p { font-size: 14px; color: var(--gray-600); margin-bottom: 2px; }
-.task-card select { padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 12px; }
+.leave-card:hover, .task-card:hover { box-shadow: var(--shadow-md); }
+.leave-card .card-header, .task-card .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.leave-card .card-header h4, .task-card .card-header h4 { font-size: 16px; font-weight: 600; color: var(--gray-900); margin: 0; }
+.leave-card .status-badge, .task-card .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+.leave-card .status-pending { background: var(--warning-light); color: var(--warning); }
+.leave-card .status-approved { background: var(--success-light); color: var(--success); }
+.leave-card .status-rejected { background: var(--danger-light); color: var(--danger); }
+.task-card .status-pending { background: var(--warning-light); color: var(--warning); }
+.task-card .status-in_progress { background: var(--primary-light); color: var(--primary); }
+.task-card .status-completed { background: var(--success-light); color: var(--success); }
+.leave-card .card-details, .task-card .card-details { margin-bottom: 12px; }
+.leave-card .card-details p, .task-card .card-details p { margin: 4px 0; font-size: 14px; color: var(--gray-700); }
+.leave-card .card-actions, .task-card .card-actions { display: flex; gap: 8px; }
 .empty-state p { font-size: 15px; }
 
 /* ===== LOGIN PAGE ===== */
@@ -161,5 +207,5 @@ tr:hover td { background: var(--gray-50); }
   .sidebar { transform: translateX(-100%); }
   .main-content { margin-left: 0; }
   .form-row { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
 }

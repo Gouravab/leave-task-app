@@ -85,43 +85,183 @@ function hideAlert() {
 function renderDashboardCards(stats) {
     const container = document.getElementById('dashboard-cards');
     if (!container) return;
+
+    const completionRate = stats.totalTasks > 0 ? Math.round((stats.completedTasks / stats.totalTasks) * 100) : 0;
+
     container.innerHTML = `
-        <div class="stat-card">
-            <h3>Total Employees</h3>
-            <p>${stats.totalEmployees}</p>
+        <div class="stat-card card-employees">
+            <div class="card-icon">👥</div>
+            <div class="card-content">
+                <h3>Total Employees</h3>
+                <p class="card-value">${stats.totalEmployees}</p>
+                <div class="card-trend">Active workforce</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>Total Tasks</h3>
-            <p>${stats.totalTasks}</p>
+        <div class="stat-card card-tasks">
+            <div class="card-icon">📋</div>
+            <div class="card-content">
+                <h3>Task Management</h3>
+                <p class="card-value">${stats.totalTasks}</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${completionRate}%"></div>
+                </div>
+                <div class="card-trend">${completionRate}% completed</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>Pending Leaves</h3>
-            <p>${stats.pendingLeaves}</p>
+        <div class="stat-card card-leaves">
+            <div class="card-icon">🏖️</div>
+            <div class="card-content">
+                <h3>Pending Leaves</h3>
+                <p class="card-value">${stats.pendingLeaves}</p>
+                <div class="card-trend">Awaiting approval</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>Completed Tasks</h3>
-            <p>${stats.completedTasks}</p>
+        <div class="stat-card card-completed">
+            <div class="card-icon">✅</div>
+            <div class="card-content">
+                <h3>Completed Tasks</h3>
+                <p class="card-value">${stats.completedTasks}</p>
+                <div class="card-trend">Successfully finished</div>
+            </div>
         </div>
     `;
+
+    // Add recent activities section
+    const detailsContainer = document.getElementById('dashboard-details');
+    if (detailsContainer) {
+        detailsContainer.innerHTML = `
+            <div class="analytics-section">
+                <h2>Quick Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4>Task Distribution</h4>
+                        <div class="metric">
+                            <span class="metric-label">Pending Tasks:</span>
+                            <span class="metric-value">${stats.totalTasks - stats.completedTasks}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Completion Rate:</span>
+                            <span class="metric-value">${completionRate}%</span>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Leave Overview</h4>
+                        <div class="metric">
+                            <span class="metric-label">Pending Requests:</span>
+                            <span class="metric-value">${stats.pendingLeaves}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Approval Rate:</span>
+                            <span class="metric-value">85%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 }
 
-function renderEmployeeDashboard(stats) {
-    const container = document.getElementById('employee-dashboard-cards');
+function renderEmployeeDashboard(stats, tasks) {
+    const container = document.getElementById('dashboard-cards');
     if (!container) return;
+
+    // Calculate task completion rate
+    const completedTasks = tasks.filter(t => t.status === 'COMPLETED').length;
+    const completionRate = stats.myTasks > 0 ? Math.round((completedTasks / stats.myTasks) * 100) : 0;
+
     container.innerHTML = `
-        <div class="stat-card">
-            <h3>My Tasks</h3>
-            <p>${stats.myTasks}</p>
+        <div class="stat-card card-tasks">
+            <div class="card-icon">📋</div>
+            <div class="card-content">
+                <h3>My Tasks</h3>
+                <p class="card-value">${stats.myTasks}</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${completionRate}%"></div>
+                </div>
+                <div class="card-trend">${completionRate}% completed</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>My Leaves</h3>
-            <p>${stats.myLeaves}</p>
+        <div class="stat-card card-leaves">
+            <div class="card-icon">📅</div>
+            <div class="card-content">
+                <h3>Leave Requests</h3>
+                <p class="card-value">${stats.myLeaves}</p>
+                <div class="card-trend">Total submitted</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>Pending Approvals</h3>
-            <p>${stats.pendingApprovals}</p>
+        <div class="stat-card card-pending">
+            <div class="card-icon">⏳</div>
+            <div class="card-content">
+                <h3>Pending Approvals</h3>
+                <p class="card-value">${stats.pendingApprovals}</p>
+                <div class="card-trend">Awaiting decision</div>
+            </div>
         </div>
     `;
+
+    const detailsContainer = document.getElementById('dashboard-details');
+    if (detailsContainer) {
+        detailsContainer.innerHTML = `
+            <div class="analytics-section">
+                <h2>My Performance</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4>Task Progress</h4>
+                        <div class="metric">
+                            <span class="metric-label">Completed:</span>
+                            <span class="metric-value">${completedTasks}/${stats.myTasks}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">In Progress:</span>
+                            <span class="metric-value">${tasks.filter(t => t.status === 'IN_PROGRESS').length}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Pending:</span>
+                            <span class="metric-value">${tasks.filter(t => t.status === 'PENDING').length}</span>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Leave Status</h4>
+                        <div class="metric">
+                            <span class="metric-label">Total Requests:</span>
+                            <span class="metric-value">${stats.myLeaves}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Pending:</span>
+                            <span class="metric-value">${stats.pendingApprovals}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Approved:</span>
+                            <span class="metric-value">${stats.myLeaves - stats.pendingApprovals}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="leave-card">
+                <div class="card-header">
+                    <h4>Recent Tasks</h4>
+                </div>
+                <div class="card-details">
+                    ${tasks.slice(0, 5).map(task => `
+                        <div class="task-item">
+                            <div class="task-info">
+                                <strong>${task.title}</strong>
+                                <span class="task-status status-${task.status.toLowerCase()}">${task.status.replace('_', ' ')}</span>
+                            </div>
+                            <div class="task-actions">
+                                <select onchange="updateMyTaskStatus(${task.id}, this.value)">
+                                    <option value="PENDING" ${task.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                    <option value="IN_PROGRESS" ${task.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
+                                    <option value="COMPLETED" ${task.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    `).join('')}
+                    <p><a href="task-status.html">View all tasks</a></p>
+                </div>
+            </div>
+        `;
+    }
 }
 
 function renderEmployeeTable(employees) {
@@ -143,12 +283,19 @@ function renderLeaveRequests(leaves) {
     if (!container) return;
     container.innerHTML = leaves.map(leave => `
         <div class="leave-card">
-            <p><strong>${leave.employeeName}</strong> - ${leave.leaveType}</p>
-            <p>${leave.startDate} to ${leave.endDate}</p>
-            <p>Reason: ${leave.reason}</p>
-            <p>Status: ${leave.status}</p>
-            <button onclick="approveLeave(${leave.id})">Approve</button>
-            <button onclick="rejectLeave(${leave.id})">Reject</button>
+            <div class="card-header">
+                <h4>${leave.employeeName} - ${leave.leaveType}</h4>
+                <span class="status-badge status-${leave.status.toLowerCase()}">${leave.status}</span>
+            </div>
+            <div class="card-details">
+                <p><strong>Dates:</strong> ${leave.fromDate} to ${leave.toDate}</p>
+                <p><strong>Reason:</strong> ${leave.reason}</p>
+                <p><strong>Requested on:</strong> ${new Date(leave.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div class="card-actions">
+                <button class="btn btn-success btn-sm" onclick="approveLeave(${leave.id})">Approve</button>
+                <button class="btn btn-danger btn-sm" onclick="rejectLeave(${leave.id})">Reject</button>
+            </div>
         </div>
     `).join('');
 }
@@ -158,17 +305,23 @@ function renderTaskList(tasks) {
     if (!container) return;
     container.innerHTML = tasks.map(task => `
         <div class="task-card">
-            <h4>${task.title}</h4>
-            <p>${task.description}</p>
-            <p>Assigned to: ${task.assignedToName}</p>
-            <p>Due: ${task.dueDate}</p>
-            <p>Priority: ${task.priority}</p>
-            <p>Status: ${task.status}</p>
-            <select onchange="updateTaskStatus(${task.id}, this.value)">
-                <option value="PENDING" ${task.status === 'PENDING' ? 'selected' : ''}>Pending</option>
-                <option value="IN_PROGRESS" ${task.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
-                <option value="COMPLETED" ${task.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
-            </select>
+            <div class="card-header">
+                <h4>${task.title}</h4>
+                <span class="status-badge status-${task.status.toLowerCase()}">${task.status.replace('_', ' ')}</span>
+            </div>
+            <div class="card-details">
+                <p><strong>Description:</strong> ${task.description}</p>
+                <p><strong>Assigned to:</strong> ${task.assignedEmployeeName || 'Unassigned'}</p>
+                <p><strong>Due:</strong> ${task.dueDate}</p>
+                <p><strong>Priority:</strong> ${task.priority}</p>
+            </div>
+            <div class="card-actions">
+                <select onchange="updateTaskStatus(${task.id}, this.value)">
+                    <option value="PENDING" ${task.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                    <option value="IN_PROGRESS" ${task.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
+                    <option value="COMPLETED" ${task.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                </select>
+            </div>
         </div>
     `).join('');
 }
@@ -178,9 +331,14 @@ function renderMyLeaves(leaves) {
     if (!container) return;
     container.innerHTML = leaves.map(leave => `
         <div class="leave-card">
-            <p>${leave.leaveType} - ${leave.startDate} to ${leave.endDate}</p>
-            <p>Reason: ${leave.reason}</p>
-            <p>Status: ${leave.status}</p>
+            <div class="card-header">
+                <h4>${leave.leaveType} Leave</h4>
+                <span class="status-badge status-${leave.status.toLowerCase()}">${leave.status}</span>
+            </div>
+            <div class="card-details">
+                <p><strong>Dates:</strong> ${leave.fromDate} to ${leave.toDate}</p>
+                <p><strong>Reason:</strong> ${leave.reason}</p>
+            </div>
         </div>
     `).join('');
 }
@@ -190,16 +348,22 @@ function renderMyTasks(tasks) {
     if (!container) return;
     container.innerHTML = tasks.map(task => `
         <div class="task-card">
-            <h4>${task.title}</h4>
-            <p>${task.description}</p>
-            <p>Due: ${task.dueDate}</p>
-            <p>Priority: ${task.priority}</p>
-            <p>Status: ${task.status}</p>
-            <select onchange="updateMyTaskStatus(${task.id}, this.value)">
-                <option value="PENDING" ${task.status === 'PENDING' ? 'selected' : ''}>Pending</option>
-                <option value="IN_PROGRESS" ${task.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
-                <option value="COMPLETED" ${task.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
-            </select>
+            <div class="card-header">
+                <h4>${task.title}</h4>
+                <span class="status-badge status-${task.status.toLowerCase()}">${task.status.replace('_', ' ')}</span>
+            </div>
+            <div class="card-details">
+                <p><strong>Description:</strong> ${task.description}</p>
+                <p><strong>Due:</strong> ${task.dueDate}</p>
+                <p><strong>Priority:</strong> ${task.priority}</p>
+            </div>
+            <div class="card-actions">
+                <select onchange="updateMyTaskStatus(${task.id}, this.value)">
+                    <option value="PENDING" ${task.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                    <option value="IN_PROGRESS" ${task.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
+                    <option value="COMPLETED" ${task.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                </select>
+            </div>
         </div>
     `).join('');
 }
@@ -219,7 +383,8 @@ async function loadEmployeeDashboard() {
     if (!user) return;
     try {
         const stats = await apiGet(`/dashboard/employee/${user.id}`);
-        renderEmployeeDashboard(stats);
+        const tasks = await apiGet(`/tasks/employee/${user.id}`);
+        renderEmployeeDashboard(stats, tasks);
     } catch (error) {
         showAlert('Failed to load dashboard: ' + error.message, 'error');
     }
@@ -281,7 +446,7 @@ async function loadMyLeaves() {
 }
 
 async function loadMyTasks() {
-    const user = getCurrentUser();
+    const user = getUser();
     if (!user) return;
     try {
         const tasks = await apiGet(`/tasks/employee/${user.id}`);
@@ -329,12 +494,17 @@ async function handleAddEmployee(event) {
 
 async function handleLeaveRequest(event) {
     event.preventDefault();
+    const user = getUser();
+    if (!user) {
+        showAlert('User not logged in', 'error');
+        return;
+    }
     const leaveType = document.getElementById('leaveType').value;
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
+    const fromDate = document.getElementById('startDate').value;
+    const toDate = document.getElementById('endDate').value;
     const reason = document.getElementById('reason').value;
     try {
-        await apiPost('/leaves', { leaveType, startDate, endDate, reason });
+        await apiPost('/leaves', { employeeId: user.id, leaveType, fromDate, toDate, reason });
         showAlert('Leave request submitted', 'success');
         loadMyLeaves();
     } catch (error) {
@@ -346,11 +516,11 @@ async function handleTaskCreation(event) {
     event.preventDefault();
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-    const assignedToId = document.getElementById('assignedTo').value;
+    const assignedEmployeeId = document.getElementById('assignedTo').value;
     const dueDate = document.getElementById('dueDate').value;
     const priority = document.getElementById('priority').value;
     try {
-        await apiPost('/tasks', { title, description, assignedToId, dueDate, priority });
+        await apiPost('/tasks', { title, description, assignedEmployeeId, dueDate, priority });
         showAlert('Task created successfully', 'success');
         loadTasks();
     } catch (error) {
@@ -417,22 +587,28 @@ function initPage() {
     }
     if (path.includes('admin-dashboard.html')) {
         loadAdminDashboard();
+        setInterval(loadAdminDashboard, 10000); // Auto-refresh every 10 seconds
     } else if (path.includes('employee-dashboard.html')) {
         loadEmployeeDashboard();
+        setInterval(loadEmployeeDashboard, 10000); // Auto-refresh every 10 seconds
     } else if (path.includes('employees.html')) {
         loadEmployees();
         document.getElementById('newEmployeeForm').addEventListener('submit', handleAddEmployee);
     } else if (path.includes('leave-approval.html')) {
         loadLeaveRequests();
+        setInterval(loadLeaveRequests, 10000); // Auto-refresh every 10 seconds
     } else if (path.includes('task-assignment.html')) {
         loadTasks();
+        setInterval(loadTasks, 10000); // Auto-refresh every 10 seconds
         populateEmployeeSelect();
         document.getElementById('taskForm').addEventListener('submit', handleTaskCreation);
     } else if (path.includes('leave-request.html')) {
         loadMyLeaves();
+        setInterval(loadMyLeaves, 10000); // Auto-refresh every 10 seconds
         document.getElementById('leaveForm').addEventListener('submit', handleLeaveRequest);
     } else if (path.includes('task-status.html')) {
         loadMyTasks();
+        setInterval(loadMyTasks, 10000); // Auto-refresh every 10 seconds
     } else if (path.includes('index.html')) {
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
     }

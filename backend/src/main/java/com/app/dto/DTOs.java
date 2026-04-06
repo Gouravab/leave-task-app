@@ -3,6 +3,7 @@ package com.app.dto;
 import com.app.model.Employee;
 import lombok.Data;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class DTOs {
 
@@ -64,6 +65,7 @@ public class DTOs {
         private LocalDate toDate;
         private String reason;
         private String status;
+        private LocalDateTime createdAt;
     }
 
     @Data
@@ -103,16 +105,15 @@ public class DTOs {
     @Data
     public static class AdminDashboard {
         private long totalEmployees;
-        private long totalLeaveRequests;
-        private long pendingLeaveRequests;
         private long totalTasks;
+        private long pendingLeaves;
+        private long completedTasks;
     }
 
     @Data
     public static class EmployeeDashboard {
-        private long assignedTasks;
-        private long completedTasks;
-        private long pendingTasks;
-        private long totalLeaveRequests;
+        private long myTasks;
+        private long myLeaves;
+        private long pendingApprovals;
     }
 }
