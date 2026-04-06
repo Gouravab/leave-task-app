@@ -161,13 +161,26 @@ function renderDashboardCards(stats) {
     }
 }
 
-function renderEmployeeDashboard(stats, tasks) {
+function renderEmployeeDashboard(user, stats, tasks) {
+    console.log('Rendering dashboard with stats:', stats, 'and tasks:', tasks);
     const container = document.getElementById('dashboard-cards');
-    if (!container) return;
+    if (!container) {
+        console.error('Dashboard cards container not found');
+        return;
+    }
+
+    // Set page title with user name
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle) {
+        pageTitle.textContent = `${user.name}'s Dashboard`;
+    }
 
     // Calculate task completion rate
     const completedTasks = tasks.filter(t => t.status === 'COMPLETED').length;
     const completionRate = stats.myTasks > 0 ? Math.round((completedTasks / stats.myTasks) * 100) : 0;
+
+    // Get recent tasks (up to 3 for the card)
+    const recentTasks = tasks.slice(0, 3);
 
     container.innerHTML = `
         <div class="stat-card card-tasks">
@@ -195,6 +208,23 @@ function renderEmployeeDashboard(stats, tasks) {
                 <h3>Pending Approvals</h3>
                 <p class="card-value">${stats.pendingApprovals}</p>
                 <div class="card-trend">Awaiting decision</div>
+            </div>
+        </div>
+        <div class="stat-card card-task-list">
+            <div class="card-icon">📝</div>
+            <div class="card-content">
+                <h3>Current Tasks</h3>
+                <div class="task-list-preview">
+                    ${recentTasks.length > 0 ? recentTasks.map(task => `
+                        <div class="task-preview-item">
+                            <span class="task-title">${task.title}</span>
+                            <span class="task-status-mini status-${task.status.toLowerCase()}">${task.status.replace('_', ' ')}</span>
+                        </div>
+                    `).join('') : '<div class="no-tasks">No tasks assigned</div>'}
+                </div>
+                <div class="card-trend">
+                    <a href="task-status.html" style="color: var(--primary); text-decoration: none;">View all tasks →</a>
+                </div>
             </div>
         </div>
     `;
@@ -380,13 +410,20 @@ async function loadAdminDashboard() {
 
 async function loadEmployeeDashboard() {
     const user = getUser();
-    if (!user) return;
+    if (!user) {
+        showAlert('No user logged in', 'error');
+        return;
+    }
     try {
         const stats = await apiGet(`/dashboard/employee/${user.id}`);
         const tasks = await apiGet(`/tasks/employee/${user.id}`);
-        renderEmployeeDashboard(stats, tasks);
+        console.log('User:', user);
+        console.log('Stats:', stats);
+        console.log('Tasks:', tasks);
+        renderEmployeeDashboard(user, stats, tasks);
     } catch (error) {
         showAlert('Failed to load dashboard: ' + error.message, 'error');
+        console.error('Dashboard load error:', error);
     }
 }
 
@@ -590,7 +627,7 @@ function initPage() {
         setInterval(loadAdminDashboard, 10000); // Auto-refresh every 10 seconds
     } else if (path.includes('employee-dashboard.html')) {
         loadEmployeeDashboard();
-        setInterval(loadEmployeeDashboard, 10000); // Auto-refresh every 10 seconds
+        setInterval(loadEmployeeDashboard, 5000); // Auto-refresh every 5 seconds
     } else if (path.includes('employees.html')) {
         loadEmployees();
         document.getElementById('newEmployeeForm').addEventListener('submit', handleAddEmployee);
