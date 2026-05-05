@@ -345,41 +345,6 @@ Contributions are welcome! Please follow these steps:
 - Add unit tests for new features
 - Update documentation as needed
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👤 Author
-
-**Gourav**
-- GitHub: [@Gouravab](https://github.com/Gouravab)
-- LinkedIn: [Add your LinkedIn profile]
-
-## 🙏 Acknowledgments
-
-- Spring Boot documentation and community
-- All contributors who helped improve this project
-- [Add any other acknowledgments]
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-- Open an issue on GitHub
-- Email: [your.email@example.com]
-- Documentation: [Link to detailed docs if available]
-
-## 🗺️ Roadmap
-
-- [ ] Add email notifications for leave approvals
-- [ ] Implement role-based access control (RBAC)
-- [ ] Add calendar view for leave requests
-- [ ] Create mobile-responsive design
-- [ ] Add export functionality (PDF/Excel)
-- [ ] Implement task comments and attachments
-- [ ] Add dashboard with analytics
-- [ ] Integrate with third-party calendar apps
-
----
 
 **⭐ Star this repository if you find it helpful!**
 
